@@ -2,15 +2,17 @@
 
 //variables
 int LIGHT_SENSOR = 0;
-int SHOULDER_SERVO = 1;
-int ELBOW_SERVO = 2;
-int CLAW_SERVO = 3;
+int SHOULDER_SERVO = 2;
+int ELBOW_SERVO = 3;
+int CLAW_SERVO = 1;
 
 //function declarations
 void drive_forward(int power, int time);
 void drive_backward(int power, int time);
 void turn_left(int power, int time);
 void turn_right(int power, int time);
+void turn_left_with_angle(int angle);
+void turn_right_with_angle(int angle);
 void set_claw(int position);
 void set_shoulder(int position);
 void set_elbow(int postion);
@@ -20,13 +22,30 @@ int main()
 {
     //wait for light
     //wait_for_light();
+    //extend elbow
+    set_elbow(1250);
+    
+    //open claw
+    set_claw(1400);
+    
     //drive towards blue water cube
     drive_forward(50, 1000);
-    //pick up blue water cube
+
+    //slightly turn left
+    turn_left_with_angle(-30);
+    
+    //close claw to pick up blue water cube
+    set_claw(400);
+    
+    //turn slightly to the right
+    turn_right_with_angle(30);
+    
     //reverse back to starting box
     drive_backward(-50, 1000);
+    
     //turn towards burning skyscraper
     turn_right(50,500);
+    
     //use camera to detect burning skyscraper
     //drive towards skyscrapers
     //place blue cube on burning skyscraper
@@ -63,11 +82,30 @@ void turn_left(int power, int time)
     create_stop();
 }
 
+void turn_left_with_angle(int angle)
+{
+    set_create_total_angle(0);
+    while (get_create_total_angle()> angle)
+    { 
+       turn_left(50,0);
+    }  
+}
+
 void turn_right(int power, int time)
 {
     create_drive_direct(power,-power);
     msleep(time);
     create_stop();
+}
+
+void turn_right_with_angle(int angle)
+{
+    set_create_total_angle(0);
+    while (get_create_total_angle()< angle)
+    { 
+        turn_right(50,0);
+    }
+    
 }
 
 void set_claw(int position)
