@@ -20,31 +20,48 @@ void move_servo(int servo_port,int position);
 
 int main()
 {
+    create_connect();
     //wait for light
     //wait_for_light();
+
+    set_servo_position(CLAW_SERVO, 1400);
+    set_servo_position(SHOULDER_SERVO, 1569);
+    set_servo_position(ELBOW_SERVO, 45);
+    enable_servos();
+
     //extend elbow
-    set_elbow(1250);
-    
+    set_elbow(1255);
+
     //open claw
     set_claw(1400);
-    
+
     //drive towards blue water cube
-    drive_forward(50, 1000);
+    drive_forward(200, 3000); 
 
     //slightly turn left
-    turn_left_with_angle(-30);
-    
+    turn_left_with_angle(23);
+
+    //drive towards blue water cube
+    drive_forward(50, 1700); 
+
     //close claw to pick up blue water cube
     set_claw(400);
-    
+
+    //drive back a little
+    drive_backward(-50, 1700); 
+
     //turn slightly to the right
-    turn_right_with_angle(30);
-    
+    turn_right_with_angle(23);
+
     //reverse back to starting box
-    drive_backward(-50, 1000);
+    drive_backward(-200, 3000);
     
     //turn towards burning skyscraper
-    turn_right(50,500);
+    turn_right_with_angle(90);
+    
+    //lift up blue water cube
+    set_elbow(650);
+    set_shoulder(750);
     
     //use camera to detect burning skyscraper
     //drive towards skyscrapers
@@ -57,6 +74,7 @@ int main()
     //drive back to starting box
     //drop mayor in starting box
     //stop in starting box
+    disable_servos();
     return 0;
 }
 
@@ -85,9 +103,9 @@ void turn_left(int power, int time)
 void turn_left_with_angle(int angle)
 {
     set_create_total_angle(0);
-    while (get_create_total_angle()> angle)
+    while (get_create_total_angle() < angle)
     { 
-       turn_left(50,0);
+        turn_left(50,50);
     }  
 }
 
@@ -101,11 +119,11 @@ void turn_right(int power, int time)
 void turn_right_with_angle(int angle)
 {
     set_create_total_angle(0);
-    while (get_create_total_angle()< angle)
+    while (get_create_total_angle() > -angle)
     { 
-        turn_right(50,0);
-    }
-    
+        turn_right(50,50);
+        printf("Current angle is %d\n", get_create_total_angle());
+    } 
 }
 
 void set_claw(int position)
@@ -130,8 +148,8 @@ void move_servo(int servo_port, int position)
     {
         while (get_servo_position(servo_port) < position)
         {
-            set_servo_position(servo_port, get_servo_position(servo_port)+50);
-            msleep(500);
+            set_servo_position(servo_port, get_servo_position(servo_port)+25);
+            msleep(100);
         }
     }
     // gradually decrease servo position to desired position
@@ -139,8 +157,8 @@ void move_servo(int servo_port, int position)
     {
         while (get_servo_position(servo_port) > position)
         { 
-            set_servo_position(servo_port, get_servo_position(servo_port)-50);
-            msleep(500);
+            set_servo_position(servo_port, get_servo_position(servo_port)-25);
+            msleep(100);
         }
     }
 }   
